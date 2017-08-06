@@ -1,4 +1,5 @@
 import requests
+import json
 from util import etree_to_dict
 import xml.etree.ElementTree as ElementTree
 import pprint
@@ -99,38 +100,21 @@ class MyAir:
         data = r.content.decode('utf-8')
         
         try:
-            tree = ElementTree.fromstring(data)
-            entry = etree_to_dict(tree)
-            
+            entry = json.loads(data)
+           
             return entry
 
-        except ElementTree.ParseError:
-            raise Exception("Found malformed XML at %s: %s", url, data)
-
-
-    def getZone(self, id):
-        #actualTemp
-        #desiredTemp
-        #name
-        if id not in range(1,10):
-            raise Exception("Invalid id: %s" % id)
-
-        req = self._request("getZoneData?zone=%s" % id)
-        zonedata = req.get('iZS10.3').get("zone%s" % id)
-
-        return zonedata
-
+        except json.AttributeError:
+            raise Exception("Found malformed JSON at %s: %s", url, data)
 
     def getZones(self):
         zones = {}
-        zonecount = self.getZoneCount()
-        for id in range(1,zonecount+1):
-            zones[id] =self.getZone(id)
+        systemdata = self.getSystem()
+        zonecount = int(len(systemdata['aircons']['ac1']['zones']))
+        for id in range(1,zonecount):
+            zoneid = "z%02d" % id
+            zones[id] = systemdata['aircons']['ac1']['zones'][zoneid]
         return zones
-
-    def getZoneCount(self, systemdata=self.getSystem()):
-        zonecount = int(systemdata.get('unitcontrol').get('numberOfZones'))
-        return zonecount
 
     def setZone(self, id, state=None, target=None):
         #TODO check if state param defined or actually false
@@ -174,9 +158,9 @@ class MyAir:
 
     def getSystem(self):
         req = self._request("getSystemData")
-        return req.get('iZS10.3').get('system')
+        return req
 
-    def getFanSpeed(self, systemdata=self.getSystem()):
+    def getFanSpeed(self, systemdata):
         fanspeed = systemdata.get('unitcontrol').get('fanSpeed')
         try:
             fanspeed_name = list(FAN_MAP.keys())[list(FAN_MAP.values()).index(fanspeed)]
@@ -185,7 +169,7 @@ class MyAir:
             return 'unknown'
         
 
-    def getMode(self, systemdata=self.getSystem()):
+    def getMode(self, systemdata):
         mode = systemdata.get('unitcontrol').get('mode')
         onoff = systemdata.get('unitcontrol').get('airconOnOff')
         if onoff == '0':
