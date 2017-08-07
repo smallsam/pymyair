@@ -1,8 +1,8 @@
 import requests
 import json
 from util import etree_to_dict
-import xml.etree.ElementTree as ElementTree
-import pprint
+#import xml.etree.ElementTree as ElementTree
+#import pprint
 
 # getSystemData
 # {'iZS10.3': {'authenticated': '1',
