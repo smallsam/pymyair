@@ -1,7 +1,8 @@
 import requests
+import json
 from util import etree_to_dict
-import xml.etree.ElementTree as ElementTree
-import pprint
+#import xml.etree.ElementTree as ElementTree
+#import pprint
 
 # getSystemData
 # {'iZS10.3': {'authenticated': '1',
@@ -61,7 +62,7 @@ import pprint
 #                        'userPercentSetting': '5'}}}
 
 FAN_MAP = {'low' : 1, 'medium': 2, 'high': 3, 'auto': 4}
-MODE_MAP = {'cool': 1, 'heat': 2, 'fan_only': 3, 'dry': 5}
+MODE_MAP = {'cool': 1, 'heat': 2, 'fan': 3, 'dry': 5}
 
 
 class MyAir:
@@ -99,50 +100,41 @@ class MyAir:
         data = r.content.decode('utf-8')
         
         try:
-            tree = ElementTree.fromstring(data)
-            entry = etree_to_dict(tree)
-            
+            entry = json.loads(data)
+           
             return entry
 
-        except ElementTree.ParseError:
-            raise Exception("Found malformed XML at %s: %s", url, data)
-
-
-    def getZone(self, id):
-        #actualTemp
-        #desiredTemp
-        #name
-        if id not in range(1,10):
-            raise Exception("Invalid id: %s" % id)
-
-        req = self._request("getZoneData?zone=%s" % id)
-        zonedata = req.get('iZS10.3').get("zone%s" % id)
-
-        return zonedata
-
+        except json.AttributeError:
+            raise Exception("Found malformed JSON at %s: %s", url, data)
 
     def getZones(self):
         zones = {}
-        zonecount = self.getZoneCount()
-        for id in range(1,zonecount+1):
-            zones[id] =self.getZone(id)
+        systemdata = self.getSystem()
+        zonecount = int(len(systemdata['aircons']['ac1']['zones']))
+        for id in range(1,zonecount):
+            zoneid = "z%02d" % id
+            zones[id] = systemdata['aircons']['ac1']['zones'][zoneid]
         return zones
-
-    def getZoneCount(self, systemdata=self.getSystem()):
-        zonecount = int(systemdata.get('unitcontrol').get('numberOfZones'))
-        return zonecount
 
     def setZone(self, id, state=None, target=None):
         #TODO check if state param defined or actually false
         # check target is int in defined range (minusertemp and maxusertemp)
         # limit to int, to maintain compatibility with myplace apps
-        if (state == 'on'):
-            self._request("setZoneData?zone=%s&zoneSetting=1" % id)
-        elif (state == 'off'):
-            self._request("setZoneData?zone=%s&zoneSetting=0" % id)
+
+        zoneid = "z%02d" % id
+
+        setjson = "{\"ac1\":{\"zones\":{\"%s\":{" % zoneid
+
+        if state:
+            setjson += "\"state\":\"%s\"" % state
 
         if target:
-            self._request("setZoneData?zone=%s&desiredTemp=%s.0" % target)
+            if state:
+                setjson += ","
+            setjson += "\"value\":%d" % target
+
+        setjson+= "}}}}"
+        self._request("setAircon?json=%s" % setjson)
 
         # TODO check centralDesiredTemp in relation to constant zone..
         # TODO check what happens when temp sensors are not working
@@ -154,49 +146,37 @@ class MyAir:
         # setSystemData?FAstatus=1,2   # Not sure what this is yet
         # setSystemData?fanSpeed=1,2,3,4  # 4 is likely to be auto
 
-        if (state == 'off'):
-            req = self._request("setSystemData?airconOnOff=0")
-        else:
-            if state in MODE_MAP:
-                req = self._request("setSystemData?mode=%s" % MODE_MAP.get(state))
-            else:
-                raise Exception('invalid state: %s' % state)
-            req = self._request("setSystemData?airconOnOff=1")
-    
+        setjson = "{\"ac1\":{\"info\":{\"state\":\"%s\"}}}" % state
+        req = self._request("setAircon?json=%s" % setjson)
 
+    def setMode(self, mode):
+        if mode in MODE_MAP:
+            setjson = "{\"ac1\":{\"info\":{\"mode\":\"%s\"}}}" % mode
+            req = self._request("setAircon?json=%s" % setjson)
+        else:
+            raise Exception('invalid state: %s' % mode)
         
     def setFanSpeed(self, fanSpeed):
-        if fanSpeed in FAN_MAP:
-            self._request("setSystemData?fanSpeed=%s" % FAN_MAP.get(fanSpeed))   
-        else:
-            raise Exception('invalid fanSpeed: %s' % fanSpeed)
+        setjson = "{\"ac1\":{\"info\":{\"fan\":\"%s\"}}}" % fanSpeed
+        self._request("setAircon?json=%s" % setjson)   
 
 
     def getSystem(self):
         req = self._request("getSystemData")
-        return req.get('iZS10.3').get('system')
+        return req
 
-    def getFanSpeed(self, systemdata=self.getSystem()):
-        fanspeed = systemdata.get('unitcontrol').get('fanSpeed')
-        try:
-            fanspeed_name = list(FAN_MAP.keys())[list(FAN_MAP.values()).index(fanspeed)]
-            return fanspeed_name
-        except DictError:
-            return 'unknown'
+    def getFanSpeed(self, systemdata):
+        fanspeed = systemdata['aircons']['ac1']['info']['fan']
+        return fanspeed
         
 
-    def getMode(self, systemdata=self.getSystem()):
-        mode = systemdata.get('unitcontrol').get('mode')
-        onoff = systemdata.get('unitcontrol').get('airconOnOff')
-        if onoff == '0':
+    def getMode(self, systemdata):
+        mode = systemdata['ac1']['info']['mode']
+        onoff = systemdata['ac1']['info']['state']
+        if onoff == 'off':
             return 'off'
-        elif onoff == '1':
-            try:
-                mode_name = list(MODE_MAP.keys())[list(MODE_MAP.values()).index(mode)]
-                return mode_name
-            # TODO: find exception name
-            except DictError:
-                return 'unknown'
+        elif onoff == 'on':
+            return mode
 
 
 if __name__== "__main__":
