@@ -40,21 +40,21 @@ Quickstart
 
 CLI
 
-   pip install pymyair
-   myair --help
-   myair 192.168.1.120 zones
-   myair 192.168.1.120 on
-   myair 192.168.1.120 set --zone 3 --temp 26 --state on
+    pip install pymyair
+    myair --help
+    myair 192.168.1.120 zones
+    myair 192.168.1.120 on
+    myair 192.168.1.120 set --zone 3 --temp 26 --state on
 
 API
 
-   from pymyair.pymyair import MyAir
+    from pymyair.pymyair import MyAir
 
-   ma = MyAir(host="192.168.1.120")
-   ma.update()
-   ma.mode = 'on'
-   ma.myzone = 6
-   ma.setZone(id=3, state='on', set_temp=26)
+    ma = MyAir(host="192.168.1.120")
+    ma.update()
+    ma.mode = 'on'
+    ma.myzone = 6
+    ma.setZone(id=3, state='on', set_temp=26)
 
 
 IP Address of WebService
