@@ -1,164 +1,76 @@
-MyAir/MyPlace (Advantage Air) Python API
-========================================
+===========================
+API for Advantage Air MyAir
+===========================
 
-A simple Python API that wraps the HTTP based API exposed by the MyPlace
-service that runs on Advantage Air supplied Android tablets. 
 
-This library can be used to control the MyAir AC zoning system allowing:
+.. image:: https://img.shields.io/pypi/v/pymyair.svg
+        :target: https://pypi.python.org/pypi/pymyair
 
- * On/Off Control
- * Mode Switching: Cool, Heat, Dry, Fan Only
- * Per Zone: On/Off, setting desiredTemp
- * Per Zone: Reading actualTemp (Not shown in Myplace app)
+.. image:: https://img.shields.io/travis/smallsam/pymyair.svg
+        :target: https://travis-ci.org/smallsam/pymyair
 
-This API was reverse engineered from communication from the MyPlace app
-(formerly MyAir 5) and only supports MyAir functionality (no MyLights)
+.. image:: https://readthedocs.org/projects/pymyair/badge/?version=latest
+        :target: https://pymyair.readthedocs.io/en/latest/?badge=latest
+        :alt: Documentation Status
 
-TODO
-----
+.. image:: https://pyup.io/repos/github/smallsam/pymyair/shield.svg
+     :target: https://pyup.io/repos/github/smallsam/pymyair/
+     :alt: Updates
 
- * Add support for systems without temperature sensors
- * Fix setting temperature of constant/myzone
- * Add discovery protocol from netdisco into this library
- * Push to pypi
 
-Examples
+A simple Python API that wraps the HTTP based API exposed by the MyPlace service that runs on Advantage Air supplied Android tablets.
+
+It can be used to control the MyAir 5 AC zoning system from Advantage Air.
+
+* Free software: MIT license
+
+Features
 --------
 
-    ma = MyAir("192.168.1.33")
-    zonedata = ma.getZone(1)
+* Zone setting, on/off. Temperature set points or percentage
+* Per AC, on/off, heat/dry/vent
+* Fan speed adjustment
+* MyZone setting
+* Reading current temperature of each zone *Not available in supplied apps*
+* Access to system and zone level info
+* CLI interface
 
-    print("ZONE 1: %s" % zonedata.get('name'))
-    print("Current Temp: %sC" % zonedata.get('actualTemp'))
-    print("Target Temp: %sC" % zonedata.get('targetTemp'))
+Quickstart
+----------
 
-    # Set temp
-    ma.setZone(state='on',target=27)
-    ma.setSystem('cool')
+CLI
 
-    ma.setSystem('off')
+   pip install pymyair
+   myair --help
+   myair 192.168.1.120 zones
+   myair 192.168.1.120 on
+   myair 192.168.1.120 set --zone 3 --temp 26 --state on
 
-----
+API
+
+   from pymyair.pymyair import MyAir
+
+   ma = MyAir(host="192.168.1.120")
+   ma.update()
+   ma.mode = 'on'
+   ma.myzone = 6
+   ma.setZone(id=3, state='on', set_temp=26)
+
 
 IP Address of WebService
-------------------------
+-------------------------
 The webservice used by this API is the only available on the same LAN as the 
-android tablet. Support for the two versions of remote access used by MyAir 
-(mycloud,firebase) are not supported. You can find the IP of the android 
-tablet in Wifi Settings - Advanced. If you do not use auto-discovery it's 
-recommended to set your MyAir android tablet to set a static dhcp entry on your
+android tablet. There is no support for the remote access APIs used by MyAir.
+You can find the IP of the android tablet in Wifi Settings - Advanced.
+It's recommended to set your MyAir android tablet to set a static dhcp entry on your
 router/dhcp server.
 
-getZone
--------
 
-Returns a dict minimally parsed directly from the MyPlace webservice similar to:
-
-{'RFstrength': '59',
-'actualTemp': '26.0',
-'desiredTemp': '26.0',
-'hasClimateControl': '1',
-'hasLowBatt': '0',
-'maxDamper': '100',
-'minDamper': '0',
-'motionCurrentState': '0',
-'name': 'MAIN BED',
-'setting': '1',
-'tempSensorClash': '0',
-'userPercentAvail': '1',
-'userPercentSetting': '5'}
-
-Of interest is the actualTemp (not exposed in the Mobile App), desiredTemp and setting (ON/OFF)
-
-getZones
---------
-
-This is a helper method to retrieve a status update for all zones.
-
-Returns a dict indexed by zoneid (1..10) of all configured zones with the getZone output for each zone.
-Note the underlying API doesn't implement a query to retrieve all zone data so this call is expensive as
-it calls getSystem then getZone for each zone.
-
-getSystem
+Credits
 ---------
 
-Returns a dict minimally parsed from the MyPlace webservice, for example:
+This package was created with Cookiecutter_ and the `audreyr/cookiecutter-pypackage`_ project template.
 
-{'AppStore': 'MyAir5',
- 'CBrev': '6.2',
- 'MyAppRev': '11.110',
- 'hasLights': '0',
- 'name': 'AIRCON',
- 'rID': None,
- 'type': '17',
- 'unitcontrol': {'activationCodeStatus': '0',
-                 'airConErrorCode': None,
-                 'airconOnOff': '1',
-                 'availableSchedules': '5',
-                 'centralActualTemp': '25.5',
-                 'centralDesiredTemp': '26.0',
-                 'fanSpeed': '4',
-                 'filterCleanWarning': '0',
-                 'maxUserTemp': '32.0',
-                 'minUserTemp': '16.0',
-                 'mode': '1',
-                 'numberOfZones': '7',
-                 'unitControlTempsSetting': '5'},
- 'zoneStationHasUnitControl': '18',
- 'zs103TechSettings': {'ACinfo': '1',
-                       'FAstatus': '0',
-                       'chucklesStatus': '0',
-                       'dealerPhoneNumber': 'xxxx',
-                       'logoPIN': 'xxxx',
-                       'my3Gstatus': '0',
-                       'numberofConstantZones': '1',
-                       'returnAirOffset': '0.0',
-                       'systemID': '1',
-                       'tempSensorNotConfigured': '0',
-                       'wifiStatus': '0',
-                       'zsConstantZone1': '6',
-                       'zsConstantZone2': '0',
-                       'zsConstantZone3': '0'}}
+.. _Cookiecutter: https://github.com/audreyr/cookiecutter
+.. _`audreyr/cookiecutter-pypackage`: https://github.com/audreyr/cookiecutter-pypackage
 
-setSystem(state)
---------------
-
-Where state is:
- * 'cool'
- * 'heat'
- * 'fan_only'
- * 'dry'
- * 'off'
-
-setZone(state,target)
----------------------
-
-For Example
-
-ma.setZone(state='on',target=27)
-
-
-setFanSpeed(fanSpeed)
----------------------
-
-Where fanSpeed is:
- * 'low'
- * 'medium'
- * 'high'
- * 'auto'
-
-Auto-Discovery
---------------
-
-Currently not implemented in this library, however there is an implementation 
-of the Advantage Air discovery protocol (over the LAN) in the netdisco project.
-https://github.com/smallsam/netdisco
-
-AES Encryption
---------------
-
-Previously the MyAir controller communication was AES encrypted but this
-appears to have been removed from the latest MyPlace service, presumably 
-to improve performance on lower end devices. To make this library simpler
-to maintain and debug going forward this support has been removed so you 
-may need to update your MyAir tablet with the Apps (now MyPlace) from Play Store.
