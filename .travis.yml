@@ -21,7 +21,9 @@ deploy:
     python: 2.7
     repo: smallsam/pymyair
     tags: true
-install: pip install -U tox-travis
+install:
+- pip install -U tox-travis
+- pip install -r requirements.txt
 language: python
 python:
 - 3.5
