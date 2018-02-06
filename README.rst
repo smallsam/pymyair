@@ -39,6 +39,7 @@ Quickstart
 ----------
 
 CLI
+::
 
     pip install pymyair
     myair --help
@@ -47,6 +48,7 @@ CLI
     myair 192.168.1.120 set --zone 3 --temp 26 --state on
 
 API
+::
 
     from pymyair.pymyair import MyAir
 
