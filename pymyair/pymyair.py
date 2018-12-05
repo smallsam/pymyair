@@ -102,7 +102,7 @@ class MyAir:
 
         zoneid = "z%02d" % id
 
-        setjson = "{\"ac1\":{\"zones\":{\"%s\":{" % zoneid
+        setjson = "{\"%s\":{\"zones\":{\"%s\":{" % (self._aircon, zoneid)
 
         if state is not None and state_value:
             setjson += "\"state\":\"%s\"" % state_value
