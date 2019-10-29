@@ -86,6 +86,17 @@ class MyAir:
 
         self._request("setAircon?json=%s" % json.dumps(valid_json))
 
+    def setTemp(self, set_temp=None):
+        '''Set global temperature'''
+
+        if set_temp in range(16, 32):
+            setjson = "{\"ac1\":{\"info\":{\"setTemp\":%d}}}" % set_temp
+        else:
+            raise Exception(
+                "temp needs to be in range 16-32, temp: %s" % set_temp)
+
+        self._request("setAircon?json=%s" % setjson)
+
     def setZone(self, id, state=None, set_temp=None, value=None):
         '''Set zone state[on|off], set_temp or value (temp sensor/percent)'''
 
