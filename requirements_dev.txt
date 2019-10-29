@@ -1,15 +1,15 @@
 pip==19.3.1
 bumpversion==0.5.3
+watchdog==0.9.0
 wheel==0.33.6
-watchdog==0.8.3
 tox==3.14.0
 flake8==3.7.9
 tox==3.14.0
+pytest==5.2.2
 PyYAML==5.1.2
 cryptography==2.8
 Sphinx==2.2.1
 coverage==4.5.4
-pytest==2.9.2
 pytest-runner==5.2
 setuptools-scm
 requests>=2
