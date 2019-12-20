@@ -9,7 +9,7 @@ setuptools-scm==3.3.3
 pytest==5.2.2
 PyYAML==5.1.2
 cryptography==2.8
-Sphinx==2.2.1
+Sphinx==2.3.0
 coverage==4.5.4
 pytest-runner==5.2
 requests>=2
