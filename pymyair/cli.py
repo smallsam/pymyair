@@ -3,7 +3,7 @@
 """Console script for pymyair."""
 
 import click
-from pymyair.pymyair import MyAir
+from pymyair import MyAir
 import json
 import requests
 import pprint
