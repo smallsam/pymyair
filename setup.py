@@ -13,6 +13,7 @@ with open('HISTORY.rst') as history_file:
 
 requirements = [
     'Click>=6.0',
+    'requests>=2'
     # TODO: put package requirements here
 ]
 
@@ -28,7 +29,7 @@ test_requirements = [
 
 setup(
     name='pymyair',
-    version='version='0.2.0'',
+    version='0.2.0',
     description="A simple Python API that wraps the HTTP based API exposed by the MyPlace service that runs on Advantage Air supplied Android tablets.",
     long_description=readme + '\n\n' + history,
     author="Sam Richards",
