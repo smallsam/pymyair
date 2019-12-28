@@ -28,7 +28,7 @@ test_requirements = [
 
 setup(
     name='pymyair',
-    version='version='0.1.0'',
+    version='version='0.2.0'',
     description="A simple Python API that wraps the HTTP based API exposed by the MyPlace service that runs on Advantage Air supplied Android tablets.",
     long_description=readme + '\n\n' + history,
     author="Sam Richards",
