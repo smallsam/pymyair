@@ -6,6 +6,7 @@
 # http://advantageair.proboards.com/thread/2/api-document
 # Requires signup, this is intended so that you can be informed of changes
 # to the spec
+from __future__ import absolute_import
 
 import requests
 import json
@@ -17,7 +18,7 @@ MODE_MAP = {'cool': 1, 'heat': 2, 'fan': 3, 'dry': 5}
 # TODO: check fan mode (docs say vent, is it the same?)
 
 
-class MyAir:
+class MyAir(object):
     def __init__(self, host, port=2025, aircon="ac1"):
         '''Params are host, port(default=2025), aircon(default="ac1")'''
         self._host = host
