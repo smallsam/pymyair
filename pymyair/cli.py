@@ -2,8 +2,10 @@
 
 """Console script for pymyair."""
 
+from __future__ import absolute_import
+
 import click
-from pymyair import MyAir
+from pymyair.pymyair import MyAir
 import json
 import requests
 import pprint
