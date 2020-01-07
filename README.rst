@@ -31,7 +31,7 @@ Features
 * Per AC, on/off, heat/dry/vent
 * Fan speed adjustment
 * MyZone setting
-* Reading current temperature of each zone *Not available in supplied apps*
+* Reading current temperature of each zone (hidden by default in apps)
 * Access to system and zone level info
 * CLI interface
 
