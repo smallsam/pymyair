@@ -3,7 +3,7 @@ watchdog==0.9.0
 wheel==0.33.6
 tox==3.14.2
 flake8==3.7.9
-setuptools-scm==3.3.3
+setuptools-scm==3.5.0
 pytest==4.6.8
 PyYAML==5.1.2
 cryptography==2.8
