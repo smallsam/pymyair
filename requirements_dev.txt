@@ -6,7 +6,7 @@ flake8==3.7.9
 setuptools-scm==3.3.3
 pytest==4.6.8
 PyYAML==5.1.2
-cryptography==2.8
+cryptography==3.4.3
 Sphinx==1.8.5
 coverage==4.5.4
 pytest-runner==5.2
