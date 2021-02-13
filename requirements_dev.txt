@@ -9,5 +9,5 @@ PyYAML==5.1.2
 cryptography==2.8
 Sphinx==1.8.5
 coverage==4.5.4
-pytest-runner==5.2
+pytest-runner==5.3.0
 requests>=2
