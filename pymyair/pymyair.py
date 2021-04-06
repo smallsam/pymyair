@@ -13,7 +13,7 @@ import json
 import time
 
 FAN_MAP = {'low': 1, 'medium': 2, 'high': 3, 'auto': 4}
-MODE_MAP = {'cool': 1, 'heat': 2, 'fan': 3, 'dry': 5}
+MODE_MAP = {'cool': 1, 'heat': 2, 'vent': 3, 'dry': 5}
 
 # TODO: check fan mode (docs say vent, is it the same?)
 
