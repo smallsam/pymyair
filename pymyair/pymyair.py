@@ -97,7 +97,27 @@ class MyAir(object):
                 "temp needs to be in range 16-32, temp: %s" % set_temp)
 
         self._request("setAircon?json=%s" % setjson)
+        
+    def setMyAutoTemp(self, set_myauto_cool_target_temp=None, set_myauto_heat_target_temp=None):
+        '''Set myauto cool target and heat temperatures'''
 
+        setjson = "{\"ac1\":{\"info\":{"
+        if set_myauto_cool_target_temp in range(20, 32):
+            setjson += "\"myAutoCoolTargetTemp\":%d" % set_myauto_cool_target_temp
+            #setjson = "{\"ac1\":{\"info\":{\"myAutoCoolTargetTemp\":%d}}}" % set_myauto_cool_target_temp
+        else:
+            raise Exception(
+                    "cool temp needs to be in range 20-32, temp: %s" % set_myauto_cool_target_temp)
+                
+        if set_myauto_heat_target_temp in range(16, 28):
+            setjson += ",\"myAutoHeatTargetTemp\":%d}}}" % set_myauto_heat_target_temp
+        else:
+            raise Exception(
+                "heat temp needs to be in range 16-28, temp: %s" % set_myauto_heat_target_temp)
+    
+        print(setjson)
+        self._request("setAircon?json=%s" % setjson)
+        
     def setZone(self, id, state=None, set_temp=None, value=None):
         '''Set zone state[on|off], set_temp or value (temp sensor/percent)'''
 
