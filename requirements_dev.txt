@@ -8,6 +8,6 @@ pytest==4.6.8
 PyYAML==5.1.2
 cryptography==2.8
 Sphinx==1.8.5
-coverage==4.5.4
+coverage==6.4.1
 pytest-runner==5.2
 requests>=2
