@@ -1,7 +1,7 @@
 bumpversion==0.5.3
 watchdog==0.9.0
 wheel==0.33.6
-tox==3.14.2
+tox==4.11.4
 flake8==3.7.9
 setuptools-scm==3.3.3
 pytest==4.6.8
